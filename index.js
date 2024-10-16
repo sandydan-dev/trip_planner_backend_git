@@ -14,6 +14,9 @@ const {
   getFlights,
   getHotels,
   getSites,
+  getFlightsByOriginAndDestination,
+  getHotelsByNameAndLocation,
+  getSitesByNameAndLocation
 } = require("./controllers/itineraryController");
 
 app.use(cors());
@@ -30,6 +33,16 @@ app.get("/data/flights", getFlights);
 app.get("/data/hotels", getHotels);
 
 app.get("/data/sites", getSites);
+
+// validate flights routes
+app.get("/flights/search", getFlightsByOriginAndDestination);
+
+// validate hotels routes
+
+app.get("/hotels/search", getHotelsByNameAndLocation);
+
+// validate hotels routes
+app.get("/sites/search", getSitesByNameAndLocation);
 
 // authenticate sequelize
 sequelize

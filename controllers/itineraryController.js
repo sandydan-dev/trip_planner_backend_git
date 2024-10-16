@@ -1,4 +1,9 @@
 const axios = require("axios");
+const {
+  validateFlightsQueryParams,
+  validateHotelsQueryParams,
+  validateSitesQueryParams
+} = require("../validation/index");
 
 // create an axios instance
 
@@ -11,7 +16,31 @@ const axiosInstance = axios.create({
   },
 });
 
+// create input validation
+
+const getFlightsByOriginAndDestination = async (req, res) => {
+  // validate input parameters
+  const errors = validateFlightsQueryParams(req.query);
+
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors });
+  }
+  // declare route
+  try {
+    const { origin, destination } = req.query;
+
+    const response = await axiosInstance.get(
+      `/flights/search?origin=${origin}&destination=${destination}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching flights:", error.message);
+    res.status(500).json({ message: "Failed to fetch flights data" });
+  }
+};
+
 const getFlights = async (req, res) => {
+  // error handling
   try {
     const test_error = req.query.test_error;
     const rate_limit = req.query.rate_limit;
@@ -53,6 +82,26 @@ const getFlights = async (req, res) => {
 };
 
 // getHotels
+
+const getHotelsByNameAndLocation = async (req, res) => {
+  // validate input parameters
+  const errors = validateHotelsQueryParams(req.query);
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors });
+  }
+
+  try {
+    const { name, location } = req.query;
+    const response = await axiosInstance.get(
+      `/hotels/search?name=${name}&location=${location}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching flights:", error.message);
+    res.status(500).json({ message: "Failed to fetch flights data" });
+  }
+};
+
 const getHotels = async (req, res) => {
   try {
     const test_error = req.query.test_error;
@@ -85,7 +134,26 @@ const getHotels = async (req, res) => {
   }
 };
 
-// siteHotels
+// site
+
+const getSitesByNameAndLocation = async (req, res) => {
+  // validate input parameters
+  const errors = validateSitesQueryParams(req.query);
+  if (errors.length > 0) {
+    return res.status(400).json({ message: errors });
+  }
+
+  try {
+    const { name, location } = req.query;
+    const response = await axiosInstance.get(
+      `/sites/search?name=${name}&location=${location}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching site hotels:", error.message);
+    res.status(500).json({ message: "Failed to fetch site sites details" });
+  }
+};
 
 const getSites = async (req, res) => {
   try {
@@ -122,4 +190,7 @@ module.exports = {
   getFlights,
   getHotels,
   getSites,
+  getFlightsByOriginAndDestination,
+  getHotelsByNameAndLocation,
+  getSitesByNameAndLocation,
 };
